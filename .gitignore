@@ -1,0 +1,6 @@
+db/
+librenms/
+
+.env
+
+.DS_Store
