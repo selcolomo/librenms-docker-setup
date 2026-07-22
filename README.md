@@ -61,3 +61,26 @@ Configure macOS APFS to monitor Rocky Linux target server
     MYSQL_DATABASE=librenms
     EOF
     ```
+  - Create `compose.yml` defining LibreNMS, MariaDB, and Redis
+  - Launch container stack in detatched mode
+    ```
+    docker compose up -d
+    ```
+
+**Verification & Device Onboarding**
+- Test SNMP Polling from Mac
+    - Query target Rocky Linux server from host/container to verify SNMP response
+      ```
+      docker exec -it librenms snmpwalk -v2c -c public 192.168.99.2
+      ```
+  - Successful when MIB system details (`sysDescr`, `sysUptime`) return without timing out
+
+ **Web UI Onboarding**
+ - Navigate to `http://localhost:8000` in browser to complete setup wizard
+ - Add target device
+ - Trigger inital discovery and polling pass manually
+   ```
+   docker exec -it librenms ffping 192.168.99.2
+   docker exec -it librenms ./discovery.php -h 192.168.99.2
+   docker exec -it librenms ./poller.php -h 192.168.99.2
+   ```
