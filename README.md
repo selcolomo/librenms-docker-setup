@@ -9,10 +9,11 @@ Configure macOS APFS to monitor Rocky Linux target server
 - Assign static IP address to specfic interface & test connection from server to Mac
   ```
   sudo ip addr 192.168.99.2/24 dev eno4
+  ping -c 3 192.168.99.1
   ```
   - Successful when 0% packet loss
 
-- **Host IP:** `192.168.99.2`
+- ****Host IP:**** `192.168.99.2`
 - **SNMP Version:** `v2c`
 - **Community:** `public`
 - **Port Association Mode:** `ifIndex`
