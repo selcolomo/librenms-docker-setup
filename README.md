@@ -43,6 +43,9 @@ Configure macOS APFS to monitor Rocky Linux target server
   sudo firewall-cmd --reload
   ```
 
+## Monitoring Platforms
+
+### LibreNMS
 #### MacOS Docker Compose Setup (LibreNMS Host)
 - **Directory & Environment Preparation**
 - Create project directory and navigate into it
@@ -84,3 +87,5 @@ Configure macOS APFS to monitor Rocky Linux target server
    docker exec -it librenms ./discovery.php -h 192.168.99.2
    docker exec -it librenms ./poller.php -h 192.168.99.2
    ```
+
+##
