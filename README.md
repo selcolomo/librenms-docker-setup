@@ -1,6 +1,11 @@
 ***Configuring Mac & Server***
 Configure macOS APFS to monitor Rocky Linux target server
 
+- **Host IP:** `192.168.99.2`
+- **SNMP Version:** `v2c`
+- **Community:** `public`
+- **Port Association Mode:** `ifIndex`
+
 **Physical Link & IP Configuration**
 - Determine Ethernet interface
   ```
@@ -13,20 +18,25 @@ Configure macOS APFS to monitor Rocky Linux target server
   ```
   - Successful when 0% packet loss
 
-- ****Host IP:**** `192.168.99.2`
-- **SNMP Version:** `v2c`
-- **Community:** `public`
-- **Port Association Mode:** `ifIndex`
-
-
-
-
-
-Deployment of containerized LibreNMS network monitoring on macOS APFS, configured to monitor a Rocky Linux target server (`192.168.99.2`).
-
-- **Host IP:** `192.168.99.2`
-- **SNMP Version:** `v2c`
-- **Community:** `public`
-- **Port Association Mode:** `ifIndex`
-
-Set `--lower-case-table-names=1` in `compose.yml` and `.env` to prevent MariaDB crash loops on case-insensitive filesystems.
+ **Rocky Linux Target Server Configuration**
+ - Install & Configure SNMP Daemon (background service that runs on network devices or servers to monitor the host's health, collect performance metrics, and processes requests from manager applications)
+   - Install `net-snmp` packages
+     ```
+     sudo dnf install -y net-snmp net-snmp-utils
+     ```
+   - Back up original configuration and set up minimal SNMPv2c listener (software program that is designed to passively wait and listen for unsolicted alert messages)
+     ```
+     sudo mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.bak
+     sudo bash -c 'cat <<EOF > /etc/snmp/snmpd.conf
+     agentAddress udp:161
+     rocommunity public 192.168.99.0/24
+     EOF'
+     ```
+   - Enable and start `nsmpd` service
+     ```
+     sudo systemctl enable --now snmpd
+     ```
+- Configure firewall rules
+   - Allow incoming SNMP traffic through `firewalld`
+     ```
+     sudo firewall-cmd --perma
