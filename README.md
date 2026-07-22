@@ -49,3 +49,15 @@ Configure macOS APFS to monitor Rocky Linux target server
       ```
       mdkir -p ~/librenms && cd ~/librenms
       ```
+  - Create `.env` file for LibreNMS container environment variables (ignored by Git to prevent exposure of passwords and sensitive information)
+    ```
+    cat <<EOF> .env
+    TZ=America/Los_Angeles
+    PUID=1000
+    PGID=1000
+    MYSQL_ROOT_PASSWORD=root_db_pass
+    MYSQL_PASSWORD=librenms_db_pass
+    MYSQL_USER=librenms
+    MYSQL_DATABASE=librenms
+    EOF
+    ```
