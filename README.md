@@ -39,4 +39,13 @@ Configure macOS APFS to monitor Rocky Linux target server
 - Configure firewall rules
    - Allow incoming SNMP traffic through `firewalld`
      ```
-     sudo firewall-cmd --perma
+     sudo firewall-cmd --permanent --add-port=161/udp
+     sudo firewall-cmd --reload
+     ```
+
+**MacOS Docker Compose Setup (LibreNMS Host)**
+- Directory & Environment Preparation
+    - Create project directory and navigate into it
+      ```
+      mdkir -p ~/librenms && cd ~/librenms
+      ```
