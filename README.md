@@ -89,3 +89,57 @@ Configure macOS APFS to monitor Rocky Linux target server
    ```
 
 ### Prometheus + Grafana
+#### Download & Transfer Node Exporter from Mac
+
+- **Download Node Exporter Binary on Mac**
+  ```
+  cd ~/Downloads
+  curl -LO https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+  ```
+- **Transfer Archive to Rocky Linux via SCP**
+  ```
+  scp node_exporter-1.8.1.linux-amd64.tar.gz root@192.168.99.2:/tmp/
+  ```
+
+#### Offline Node Exporter Installation on Server
+- Verify the transferred tarball exists in `/tmp`
+  ```
+  ls -l /tmp/node_exporter-1.8.1.linux-amd64.tar.gz
+  ```
+- Extract the compressed file and move the executable into a system directory so it can be run as a service:
+  ```
+  cd /tmp
+  tar xvfz node_exporter-1.8.1.linux-amd64.tar.gz
+  sudo mv node_exporter-1.8.1.linux-amd64/node_exporter /usr/local/bin/
+  sudo rm -rf node_exporter-1.8.1.linux-amd64*
+  ```
+- Create a `systemd` service which will allow Node Exporter to run quietly in the background without needing an open terminal window
+  ```
+  sudo bash -c 'cat <<EOF > /etc/systemd/system/node_exporter.service
+  [Unit]
+  Description=Node Exporter
+  After=network.target
+  
+  [Service]
+  User=nobody
+  ExecStart=/usr/local/bin/node_exporter
+  
+  [Install]
+  WantedBy=multi-user.target
+  EOF'
+  ```
+- **Enable and Start Node Exporter**
+- Tell `systemd` to register the new service file and start Node Exporter:
+  ```
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now node_exporter
+  sudo systemctl status node_exporter
+  ```
+- **Configure Firewalld for TCP Port 9100**
+- Open TCP port `9100` so Prometheus running on the Mac can pull metrics across the Ethernet cable
+  ```
+  sudo firewall-cmd --permanent --add-port=9100/tcp
+  sudo firewall-cmd --reload
+  ```
+  
+  
