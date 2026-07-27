@@ -141,5 +141,13 @@ Configure macOS APFS to monitor Rocky Linux target server
   sudo firewall-cmd --permanent --add-port=9100/tcp
   sudo firewall-cmd --reload
   ```
-  
+- **Test Local Metrics**
+- Verify that Node Exporter is listening and producing system metrics locally on TCP port 9100.
+  ```
+  nc -zv 127.0.0.1 9100
+  ```
+- Expected Outpout:
+  ```
+  Ncat: Connected to 127.0.0.1:9100.
+  ```
   
