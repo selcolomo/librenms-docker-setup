@@ -164,3 +164,7 @@ Configure macOS APFS to monitor Rocky Linux target server
 - In Prometheus server URL enter: `http://prometheus:9090`
 - **Import the Official Node Exporter Dashboard**
 - In the *Find and import dashboards* fields enter, `1860` and import
+
+### Zabbix
+- **Create `compose.yml` for Zabbix**
+- 
