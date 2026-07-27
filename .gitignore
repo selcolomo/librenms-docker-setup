@@ -13,3 +13,5 @@ librenms/
 prometheus_data/
 grafana_data/
 *.tar
+*.tar
+*.tar.gz
