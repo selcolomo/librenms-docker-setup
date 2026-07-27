@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'rocky-linux-server'
+    static_configs:
+      - targets: ['192.168.99.2:9100']
