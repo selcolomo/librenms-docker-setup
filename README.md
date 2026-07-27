@@ -90,13 +90,12 @@ Configure macOS APFS to monitor Rocky Linux target server
 
 ### Prometheus + Grafana
 #### Download & Transfer Node Exporter from Mac
-
-- **Download Node Exporter Binary on Mac**
+- Download Node Exporter Binary on Mac
   ```
   cd ~/Downloads
   curl -LO https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
   ```
-- **Transfer Archive to Rocky Linux via SCP**
+- Transfer Archive to Rocky Linux via SCP
   ```
   scp node_exporter-1.8.1.linux-amd64.tar.gz root@192.168.99.2:/tmp/
   ```
@@ -128,20 +127,22 @@ Configure macOS APFS to monitor Rocky Linux target server
   WantedBy=multi-user.target
   EOF'
   ```
-- **Enable and Start Node Exporter**
+  
+#### Enable and Start Node Exporter
 - Tell `systemd` to register the new service file and start Node Exporter:
   ```
   sudo systemctl daemon-reload
   sudo systemctl enable --now node_exporter
   sudo systemctl status node_exporter
   ```
-- **Configure Firewalld for TCP Port 9100**
+  
+#### Configure Firewalld for TCP Port 9100
 - Open TCP port `9100` so Prometheus running on the Mac can pull metrics across the Ethernet cable
   ```
   sudo firewall-cmd --permanent --add-port=9100/tcp
   sudo firewall-cmd --reload
   ```
-- **Test Local Metrics**
+#### Test Local Metrics
 - Verify that Node Exporter is listening and producing system metrics locally on TCP port 9100.
   ```
   nc -zv 127.0.0.1 9100
@@ -151,3 +152,15 @@ Configure macOS APFS to monitor Rocky Linux target server
   Ncat: Connected to 127.0.0.1:9100.
   ```
   
+#### Verify Prometheus is Scraping Rocky Linux
+- Open browser and go to: `http://localhost:9090/targets`
+- Look at `rocky-linux-server` target and verify that it is `UP` and Prometheus is successfully pulling metrics from `192.168.99.2:9100`
+  
+#### Configure Grafana Dashboard
+- Open `http://localhost:3000` in browser
+  - Username: `admin`
+  - Password: `admin`
+- **Add Prometheus as a Data Source**
+- In Prometheus server URL enter: `http://prometheus:9090`
+- **Import the Official Node Exporter Dashboard**
+- In the *Find and import dashboards* fields enter, `1860` and import
