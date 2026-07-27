@@ -166,5 +166,29 @@ Configure macOS APFS to monitor Rocky Linux target server
 - In the *Find and import dashboards* fields enter, `1860` and import
 
 ### Zabbix
-- **Create `compose.yml` for Zabbix**
-- 
+- **Create local directory**
+  ```
+  cd ~/monitoring-lab
+  mkdir zabbix
+  ```
+- Create `compose.yml` file for Zabbix inside directory
+- **Download Docker Images**
+  ```
+  docker pull --platform linux/amd64 postgres:15-alpine
+  docker pull --platform linux/amd64 zabbix/zabbix-server-pgsql:alpine-7.0-latest
+  docker pull --platform linux/amd64 zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest
+  
+  docker save postgres:15-alpine \
+  zabbix/zabbix-server-pgsql:alpine-7.0-latest \
+  zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest \
+  -o zabbix-images.tar
+  ```
+- **Transfer files to server**
+  ```
+  scp zabbix-images.tar root@192.168.99.2:~/
+  scp -r ~/monitoring-lab/zabbix root@192.168.99.2:~/
+  ```
+- **Load Docker images onto server**
+  ```
+  docker load -i ~/zabbix-images.tar
+  ```
