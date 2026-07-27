@@ -1,17 +1,13 @@
-# macOS system files
+
 .DS_Store
 
-# Environment & secrets
 .env
 
-# Log files
 *.log
 
-# Docker persistent data & database folders
-db/
-librenms/
-prometheus_data/
-grafana_data/
-*.tar
 *.tar
 *.tar.gz
+
+db/
+prometheus_data/
+grafana_data/
