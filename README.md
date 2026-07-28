@@ -166,29 +166,69 @@ Configure macOS APFS to monitor Rocky Linux target server
 - In the *Find and import dashboards* fields enter, `1860` and import
 
 ### Zabbix
-- **Create local directory**
+#### Local Environment Preparation 
+- Create local directory
   ```
   cd ~/monitoring-lab
   mkdir zabbix
   ```
+- Create an `.env` file to manage environment variables:
+  ```
+  cat << 'EOF' > .env
+  POSTGRES_USER=zabbix
+  POSTGRES_PASSWORD=zabbix_password
+  POSTGRES_DB=zabbix
+  PHP_TZ=America/Los_Angeles
+  EOF
+  ```
 - Create `compose.yml` file for Zabbix inside directory
-- **Download Docker Images**
+- **Download `amd64` Images on Mac**
   ```
-  docker pull --platform linux/amd64 postgres:15-alpine
-  docker pull --platform linux/amd64 zabbix/zabbix-server-pgsql:alpine-7.0-latest
-  docker pull --platform linux/amd64 zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest
+  regctl image export --platform linux/amd64 postgres:15-alpine postgres.tar
+  regctl image export --platform linux/amd64 zabbix/zabbix-server-pgsql:alpine-7.0-latest zabbix-server.tar
+  regctl image export --platform linux/amd64 zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest zabbix-web.tar
+  regctl image export --platform linux/amd64 zabbix/zabbix-agent:alpine-7.0-latest zabbix-agent.tar
   
-  docker save postgres:15-alpine \
-  zabbix/zabbix-server-pgsql:alpine-7.0-latest \
-  zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest \
-  -o zabbix-images.tar
+  tar -cvf zabbix-images.tar *.tar
   ```
-- **Transfer files to server**
+  
+#### Transfer Images onto Rocky Linux server
+- Transfer files to the server using `scp`
   ```
   scp zabbix-images.tar root@192.168.99.2:~/
-  scp -r ~/monitoring-lab/zabbix root@192.168.99.2:~/
   ```
-- **Load Docker images onto server**
+- On the Rocky Linux server, unpack and load the images into Podman:
   ```
-  docker load -i ~/zabbix-images.tar
+  tar -xvf zabbix-images.tar
+  podman load -i postgres.tar
+  podman load -i zabbix-server.tar
+  podman load -i zabbix-web.tar
+  podman load -i zabbix-agent.tar
   ```
+  
+#### Deploy stack using Podman Compose
+- Create working folder and live `.env` file on the server:
+  ```
+  mkdir -p ~/zabbix
+  cd ~/zabbix
+  
+  cat << 'EOF' > .env
+  POSTGRES_USER=zabbix
+  POSTGRES_PASSWORD=zabbix_password
+  POSTGRES_DB=zabbix
+  PHP_TZ=America/Los_Angeles
+  EOF
+  ```
+- Copy over `docker-compose.yml` to `~/zabbix/docker-compose.yml` and launch with podman-compose:
+  ```
+  podman-compose up -d
+  ```
+- Check running containers
+  ```
+  podman ps
+  ```
+
+#### Web UI Initial Setup
+- Open browser and navigate to `http://192.168.99.2:8080`
+  - Username: `Admin`
+  - Password: `zabbix`
