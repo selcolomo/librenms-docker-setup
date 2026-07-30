@@ -232,3 +232,7 @@ Configure macOS APFS to monitor Rocky Linux target server
 - Open browser and navigate to `http://192.168.99.2:8080`
   - Username: `Admin`
   - Password: `zabbix`
+
+
+## TAP Configuration
+- 
