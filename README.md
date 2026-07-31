@@ -255,3 +255,41 @@ A Network TAP mirrors raw network traffic from the monitored target devices dire
   ip -s link show eno3
   ```
 
+## Dashboard Configuration
+
+### Grafana
+- **Queries to to visualize TAP traffic captured on `eno3`**
+- Incoming Traffic (RX Bandwidth):
+  ```
+  rate(node_network_receive_bytes_total{device="eno3"}[5m]) * 8
+  ```
+  - Confirms mirrored frames from the TAP are actively entering the `eno3` interface
+  - Unit: `bits/sec (SI)`
+- Outgoing Traffic (TX Bandwidth):
+  ```
+  rate(node_network_transmit_bytes_total{device="eno3"}[5m]) * 8
+  ```
+  - Confirms passive monitoring mode. `eno3` should only receive TAP traffic and not transmit frames back onto the wire.
+  - Unit: `bits/sec (SI)`
+- Live Bandwidth
+  ```
+  rate(node_network_receive_bytes_total{device="eno3"}[1m]) * 8
+  ```
+  - Shows real-time ingestion speed of incoming network traffic
+  - Unit: `bits/sec (SI)`
+- Total Data Volume:
+  ```
+  increase(node_network_receive_bytes_total{device="eno3"}[$__range])
+  ```
+  - Tracks total volume of raw packet data ingested by `eno3` over time.
+  - Unit: `bytes (IEC)`
+- Physical Errors:
+  ```
+  rate(node_network_receive_errs_total{device="eno3"}[5m])
+  ```
+  - Monitors physical integrity. Non-zero values indicate faulty cables, bad TAP signaling, or CRC errors.
+- Dropped Packets:
+  ```
+  rate(node_network_receive_drop_total{device="eno3"}[5m])
+  ```
+  - Tracks buffer overflows. Non-zero values indicate CPU bottlenecking, disabled promiscuous mode, or inadequate ring buffer size.
