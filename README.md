@@ -235,4 +235,23 @@ Configure macOS APFS to monitor Rocky Linux target server
 
 
 ## TAP Configuration
-- 
+A Network TAP mirrors raw network traffic from the monitored target devices directly into a dedicated physical interface (`eno3`) on the target server.
+
+#### Physical Link Setup & Driver Verification
+- Connect the TAP mirror port directly to physical interface (`eno3`) on the Rocky Linux server using an ethernet cable
+- Confirm interface status and ensure link stat is **UP**:
+  ```
+  ip link show eno3
+  ```
+  - Enable promiscuous mode on `eno3` so the network card accepts and captures all mirrored traffic
+    ```
+    sudo ip link set eno3 up
+    sudo ip link set eno3 promisc on
+    ```
+
+#### Verify TAP Packet Arrival
+- Ensure that raw packets are arriving on `eno3`
+  ```
+  ip -s link show eno3
+  ```
+
