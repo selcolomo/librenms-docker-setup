@@ -32,7 +32,7 @@ Configure macOS APFS to monitor Rocky Linux target server
   rocommunity public 192.168.99.0/24
   EOF'
   ```
-- Enable and start `nsmpd` service
+- Enable and start `snmpd` service
   ```
   sudo systemctl enable --now snmpd
   ```
